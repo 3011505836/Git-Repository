@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+	例如namespace="com.szh.mapper.personMapper"就是com.szh.mapper(包名)+personMapper(personMapper.xml文件去除后缀) -->
+<mapper namespace="com.fh.mapper.MemberMapper">
+
+    <sql id="tableName">
+        shop_member
+    </sql>
+
+
+    <insert id="addMember" parameterType="Member">
+      insert into <include refid="tableName"/> (name,password,phoneNumber)
+      values(#{name},#{password},#{phoneNumber})
+    </insert>
+
+    <select id="getMemberIsHas" parameterType="string" resultType="member">
+        select tm.*,city.id cityId,province.id provinceId from <include refid="tableName"/> tm
+        left join city county on tm.areaId = county.id
+        left join city city on county.pid = city.id
+        left join city province on city.pid = province.id
+        where phoneNumber = #{whatEver} or name = #{whatEver} or email = #{whatEver}
+    </select>
+
+
+    <select id="getMemberById" parameterType="int" resultType="Member">
+        select tm.*,city.id cityId,province.id provinceId from <include refid="tableName"/> tm
+        left join city county on tm.areaId = county.id
+        left join city city on county.pid = city.id
+        left join city province on city.pid = province.id
+        where tm.id = #{id}
+    </select>
+
+
+    <select id="queryAreaByPid" parameterType="int" resultType="Area">
+      select * from city where pid = #{pid}
+    </select>
+
+    <update id="updateMember" parameterType="Member">
+        update <include refid="tableName"/> set
+        name=#{name},phoneNumber=#{phoneNumber},email=#{email},sex=#{sex},
+        nickName=#{nickName},realName=#{realName},areaId=#{areaId},birthday=#{birthday}
+        where id = #{id}
+    </update>
+
+
+
+
+</mapper>
